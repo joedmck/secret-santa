@@ -16,7 +16,9 @@ const HintCard: FC<HintCardProps> = ({
   link,
 }) => {
   return (
-    <div className={`block p-6 rounded-lg border shadow-md w-full`}>
+    <div
+      className={`block p-6 rounded-lg border shadow-md w-full overflow-hidden text-ellipsis`}
+    >
       <div className={`flex flex-row justify-between`}>
         <h5 className={`mb-2 text-2xl font-bold`}>{title}</h5>
         <p className={`text-lg`}>£{price.toFixed(2)}</p>
