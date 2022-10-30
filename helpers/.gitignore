@@ -1,0 +1,5 @@
+node_modules
+
+# Secrets
+service-account.json
+users-to-create.json
