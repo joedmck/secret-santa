@@ -43,8 +43,6 @@ const useHints: UseHintsHook = (authUserDocRef, userDocRef) => {
   const [querySnapshot, queryLoading, queryError] = useCollection(hintQuery);
   const { data: users } = useUsers();
 
-  console.log(queryError);
-
   const usersDetails = users?.reduce<UserMap>(
     (acc, { uid, ...data }: SecretSantaUser) => {
       acc[uid] = data;

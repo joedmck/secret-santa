@@ -66,11 +66,15 @@ const Hints: FC = () => {
         <HintCard
           key={id}
           {...{
+            hintId: id,
             title,
             notes,
             price,
             link: url,
             authorName: (author as SecretSantaUser).name,
+            showDelete:
+              (author as SecretSantaUser).username ===
+              authUserDetails?.username,
           }}
         />
       ))}

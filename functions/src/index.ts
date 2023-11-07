@@ -4,7 +4,8 @@ import {initializeApp} from "firebase-admin/app";
 initializeApp(config().firebase);
 
 import authenticationHandler from "./authenticate";
-export const authenticate =
-    region("europe-west3")
-        .https
-        .onCall(authenticationHandler);
+export const authenticate = region("europe-west3")
+    .runWith({
+      enforceAppCheck: true,
+    })
+    .https.onCall(authenticationHandler);

@@ -1,19 +1,25 @@
+import { firebaseFirestore } from '@/firebase-instance';
+import { deleteDoc, doc } from 'firebase/firestore';
 import { FC } from 'react';
 
 interface HintCardProps {
+  hintId: string;
   title: string;
   notes: string;
   authorName: string;
   price: number;
   link?: string;
+  showDelete: boolean;
 }
 
 const HintCard: FC<HintCardProps> = ({
+  hintId,
   title,
   notes,
   authorName,
   price,
   link,
+  showDelete,
 }) => {
   return (
     <div
@@ -29,6 +35,16 @@ const HintCard: FC<HintCardProps> = ({
         <a className={`text-blue-600 visited:text-purple-600`} href={link}>
           {link}
         </a>
+      )}
+      {showDelete === true && (
+        <div className={`flex flex-row justify-end mt-1`}>
+          <button
+            className={`px-10 py-2 rounded border hover:bg-gray-100 dark:hover:bg-neutral-700`}
+            onClick={_ => deleteDoc(doc(firebaseFirestore, 'hints', hintId))}
+          >
+            Delete
+          </button>
+        </div>
       )}
     </div>
   );
