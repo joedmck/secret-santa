@@ -30,8 +30,6 @@ const ChangePassword: FC = () => {
   } = useAuthenticatedUser();
   const navigate = useNavigate();
 
-  console.log(userPrivateAttributes);
-
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -47,7 +45,7 @@ const ChangePassword: FC = () => {
       return setValidationError('Passwords do not match.');
     }
 
-    const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
+    const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d!@#$%^&*()_+]{8,}$/;
     if (!regex.test(newPassword)) {
       return setValidationError(
         'Password must contain at least 1 upercase letter, 1 lowercase letter and 1 number.'

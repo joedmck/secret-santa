@@ -58,7 +58,7 @@ const changePasswordHandler = async (request: CallableRequest<RequestBody>) => {
 
   const valid = await verify(secrets.passwordHash, currentPassword);
 
-  const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
+  const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d!@#$%^&*()_+]{8,}$/;
   if (!regex.test(newPassword)) {
     return response(
         true,
