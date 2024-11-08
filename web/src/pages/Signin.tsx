@@ -1,45 +1,11 @@
 import { FC, FormEvent, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { httpsCallable } from 'firebase/functions';
 import { signInWithCustomToken } from 'firebase/auth';
 
-import { firebaseFunctions, firebaseAuth } from '@/firebase-instance';
+import { firebaseAuth } from '@/firebase-instance';
 import { Loading } from '@/pages';
-
-type Passphrases = [string, string, string];
-interface AuthenticateRequestBody {
-  username: string;
-  passphrases: Passphrases;
-}
-interface AuthenticateResponse {
-  authenticated: boolean;
-  token: string | null;
-  status: string;
-}
-interface PassphraseFieldProps {
-  number: string;
-}
-
-const PassphraseField: FC<PassphraseFieldProps> = ({ number }) => {
-  return (
-    <div>
-      <label htmlFor={`passphrase-${number}`}>Passphrase {number}</label>
-      <input
-        type='text'
-        name={`passphrase-${number}`}
-        className={`w-full p-2 border rounded-md outline-none text-sm mb-4`}
-        id='password'
-        placeholder={`Passphrase ${number}`}
-      />
-    </div>
-  );
-};
-
-const authenticate = httpsCallable<
-  AuthenticateRequestBody,
-  AuthenticateResponse
->(firebaseFunctions, 'authenticate');
+import { authenticate } from '@/services';
 
 const getFormValue = (
   elements: HTMLFormControlsCollection,
@@ -58,18 +24,16 @@ const Signin: FC = () => {
     const { elements } = e.currentTarget;
 
     const username = getFormValue(elements, 'username');
-    const passphrase1 = getFormValue(elements, 'passphrase-1');
-    const passphrase2 = getFormValue(elements, 'passphrase-2');
-    const passphrase3 = getFormValue(elements, 'passphrase-3');
+    const password = getFormValue(elements, 'password');
 
     try {
       const response = await authenticate({
         username,
-        passphrases: [passphrase1, passphrase2, passphrase3],
+        password,
       });
 
       if (response.data.authenticated !== true)
-        throw new Error('Authentication Faliure');
+        throw Error('Authentication Faliure');
 
       const token = response.data.token as string;
       await signInWithCustomToken(firebaseAuth, token);
@@ -88,7 +52,8 @@ const Signin: FC = () => {
     <section
       className={`h-screen v-screen flex justify-center items-center flex-col`}
     >
-      <h1 className={`text-3xl pb-10`}>Secret Santa</h1>
+      <h1 className={`text-3xl mb-10`}>Secret Santa</h1>
+      <h2 className={`text-2xl mb-10`}>Login</h2>
 
       <form onSubmit={handleSubmit}>
         <div>
@@ -98,12 +63,19 @@ const Signin: FC = () => {
             type='username'
             className={`w-full p-2 border rounded-md outline-none text-sm mb-4`}
             id='username'
-            placeholder='Your Username'
+            placeholder='Your username'
           />
         </div>
-        <PassphraseField number='1' />
-        <PassphraseField number='2' />
-        <PassphraseField number='3' />
+        <div>
+          <label htmlFor='password'>Password</label>
+          <input
+            name='password'
+            type='password'
+            className={`w-full p-2 border rounded-md outline-none text-sm mb-4`}
+            id='password'
+            placeholder='Your password'
+          />
+        </div>
 
         <div className='flex justify-center items-center mt-6'>
           <button

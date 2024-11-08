@@ -9,6 +9,7 @@ export interface HintDocument {
   url: string;
   giftee: DocumentReference;
   author: DocumentReference;
+  timestamp: number;
 }
 
 export type Hint = Omit<HintDocument, 'giftee|author'> & {

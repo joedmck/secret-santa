@@ -62,22 +62,25 @@ const Hints: FC = () => {
         Add a Hint
       </button>
       <hr className={`border w-full`} />
-      {hints?.map(({ id, title, notes, price, url, author }) => (
-        <HintCard
-          key={id}
-          {...{
-            hintId: id,
-            title,
-            notes,
-            price,
-            link: url,
-            authorName: (author as SecretSantaUser).name,
-            showDelete:
-              (author as SecretSantaUser).username ===
-              authUserDetails?.username,
-          }}
-        />
-      ))}
+      {hints
+        ?.sort((a, b) => b.timestamp - a.timestamp)
+        .map(({ id, title, notes, price, url, author, timestamp }) => (
+          <HintCard
+            key={id}
+            {...{
+              hintId: id,
+              title,
+              notes,
+              price,
+              timestamp,
+              link: url,
+              authorName: (author as SecretSantaUser).name,
+              showDelete:
+                (author as SecretSantaUser).username ===
+                authUserDetails?.username,
+            }}
+          />
+        ))}
       {hints?.length == 0 && (
         <p className={`text-center`}>Nothing to show yet.</p>
       )}

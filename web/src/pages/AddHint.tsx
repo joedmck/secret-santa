@@ -52,6 +52,7 @@ const AddHint: FC = () => {
         url: url,
         giftee: userDocumentReference,
         author: authUserDocumentReference,
+        timestamp: Math.floor(Date.now() / 1000),
       });
       setLoading(false);
       navigate(`/hints/${user!.username}`, { replace: true });

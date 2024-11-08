@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "argon2": "^0.41.1",
     "firebase-admin": "^11.1.0",
     "lodash": "^4.17.21",
     "random-words": "^1.2.0"

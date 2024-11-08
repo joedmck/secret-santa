@@ -20,5 +20,8 @@ service cloud.firestore {
     match /assignments/{document=**} {
     	allow read: if request.auth.uid == get(resource.data.gifter).id;
     }
+    match /user-private/{document=**} {
+    	allow read: if request.auth.uid == get(resource.data.user).id;
+    }
   }
 }

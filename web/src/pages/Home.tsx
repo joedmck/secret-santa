@@ -23,6 +23,12 @@ const Home: FC = () => {
   return (
     <section className={`flex items-center flex-col space-y-3 my-5 w-11/12`}>
       <TopBar
+        leftButton={{
+          text: 'Change Password',
+          onClick: () => {
+            navigate('/change-password');
+          },
+        }}
         rightButton={{
           text: 'Sign Out',
           onClick: () => {

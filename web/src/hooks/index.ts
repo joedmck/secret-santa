@@ -9,3 +9,6 @@ export * from './use-user';
 
 export { default as useHints } from './use-hints';
 export * from './use-hints';
+
+export { default as useUserPrivateAttributes } from './use-user-private-attributes';
+export * from './use-user-private-attributes';

@@ -1,24 +1,24 @@
-import {https} from "firebase-functions";
 import {firestore, auth} from "firebase-admin";
 import {DocumentReference} from "firebase-admin/firestore";
+import {CallableRequest} from "firebase-functions/https";
+import {verify} from "argon2";
 
 const db = firestore();
 
 interface RequestBody {
   username: string;
-  passphrases: AccessWords;
+  password: string;
 }
-
-type AccessWords = [string, string, string];
 
 interface User {
   username: string;
   name: string;
   secrets: DocumentReference;
+  mustChangePassword: boolean;
 }
 
 interface UserSecretsDocument {
-  accessWords: AccessWords;
+  passwordHash: string;
 }
 
 const response = (
@@ -31,45 +31,34 @@ const response = (
   status,
 });
 
-const validateAccessWords = (
-    submitted: AccessWords,
-    stored: AccessWords
-): boolean => {
-  return (
-    submitted.length === stored.length &&
-    submitted.every((val, index) => val === stored[index])
-  );
-};
+const authenticationHandler = async (request: CallableRequest<RequestBody>) => {
+  const {data} = request;
 
-const authenticationHandler = async (
-    data: RequestBody,
-    context: https.CallableContext
-) => {
-  const username = data.username.toLowerCase();
-  const accessWords = data.passphrases
-      .map((phrase: string) => phrase.toLowerCase())
-      .sort() as AccessWords;
+  const {username, password} = data;
 
+  const usernameLower = username.toLowerCase();
   const usersCollection = db.collection("users");
-  const query = await usersCollection.where("username", "==", username).get();
+  const query = await usersCollection
+      .where("username", "==", usernameLower)
+      .get();
 
   if (query.empty === true) {
-    console.error(`User not found ${username}.`);
+    console.error(`User not found ${usernameLower}.`);
     return response(false, null, "User not found.");
   }
   if (query.size > 1) {
-    console.error(`More than one user found with username ${username}.`);
+    console.error(`More than one user found with username ${usernameLower}.`);
     return response(false, null, "Internal server error.");
   }
   const user = query.docs[0];
-  const userData = query.docs[0].data() as User;
+  const userData = user.data() as User;
 
-  const referenceAccessWordsSnapshot = await userData.secrets.get();
-  const referenceAccessWordsUnsorted =
-    await (referenceAccessWordsSnapshot.data() as UserSecretsDocument);
-  const referenceAccessWords = referenceAccessWordsUnsorted.accessWords.sort();
+  const secretsSnapshot = await userData.secrets.get();
+  const secrets = secretsSnapshot.data() as UserSecretsDocument;
 
-  if (validateAccessWords(accessWords, referenceAccessWords) == true) {
+  const valid = await verify(secrets.passwordHash, password);
+
+  if (valid === true) {
     const token = await auth().createCustomToken(user.id, {
       name: userData.name,
       username: userData.username,
